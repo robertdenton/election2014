@@ -1,0 +1,170 @@
+<html>
+<head>
+	<style>
+		body{
+			color: white;
+		}
+		.box{
+			width: 21%;
+			margin: 2%;
+			float: left;
+			background: #54B3F7;
+		}
+		@media (max-width: 980px){
+			.box{
+				width: 96%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<h1>Senate (Merkley v. Wehby)</h1>
+		<div class="sen_data">
+			<div class="sen_1"></div>
+			<div class="sen_2"></div>
+		</div>
+	</div>
+	<div class="box">
+		<h1>Governor (Kitzhaber v. Richardson)</h1>
+		<div class="gov_data">
+			<div class="gov_1"></div>
+			<div class="gov_2"></div>
+		</div>
+	</div>
+	<div class="box">
+		<h1>Recreational marijuana (#91)</h1>
+		<div class="mj_data">
+			<div class="mj_1"></div>
+			<div class="mj_2"></div>
+		</div>
+	</div>
+	<div class="box">
+		<h1>Driver licenses for non-citizens (#88)</h1>
+		<div class="id_data">
+			<div class="id_1"></div>
+			<div class="id_2"></div>
+		</div>
+	</div>
+	
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<!-- begin d3 script -->
+	<script>
+	var data;
+	//get json data, everything that uses this data must be in this function
+	d3.json("data.json", function(error, json){
+		if (error){
+			console.log(error);
+		} 
+		else {
+			console.log(json);
+		}
+		//set our var to the data
+		data=json;
+		
+		var sen_total = data.sen.Merkley+data.sen.Wehby;
+		var sen_Merk = data.sen.Merkley;
+		var sen_Merk_p = ((sen_Merk/sen_total)*100);
+		var sen_Merk_r = d3.round(sen_Merk_p, 2);
+		console.log(sen_Merk_r);
+		var sen_Wehb = data.sen.Wehby;
+		var sen_Wehb_p = ((sen_Wehb/sen_total)*100);
+		var sen_Wehb_r = d3.round(sen_Wehb_p, 2);
+		
+		d3.select(".sen_1")
+			.append("div")
+			.style("width", (sen_Merk_p)+"%")
+			.style("background", "black")
+			.text("Merkley: " + (sen_Merk_r + "% votes"));
+		
+		d3.select(".sen_2")
+			.append("div")
+			.style("width", (sen_Wehb_p)+"%")
+			.style("background", "black")
+			.text("Wehby: " + (sen_Wehb_r) + "% votes");
+			
+		d3.select(".gov_1")
+			.append("div")
+			.style("width", ((data.gov.Kitzhaber/(data.gov.Kitzhaber+data.gov.Richardson))*100)+"%")
+			.style("background", "black")
+			.text("Kitzhaber: " + ((data.gov.Kitzhaber/(data.gov.Kitzhaber+data.gov.Richardson))*100) + "% votes");
+		
+		d3.select(".gov_2")
+			.append("div")
+			.style("width", ((data.gov.Richardson/(data.gov.Kitzhaber+data.gov.Richardson))*100)+"%")
+			.style("background", "black")
+			.text("Richardson: " + ((data.gov.Richardson/(data.gov.Kitzhaber+data.gov.Richardson))*100) + "% votes");
+		
+		d3.select(".mj_1")
+			.append("div")
+			.style("width", ((data.mj.Yes/(data.mj.Yes+data.mj.No))*100)+"%")
+			.style("background", "black")
+			.text("Yes: " + ((data.mj.Yes/(data.mj.Yes+data.mj.No))*100) + "% votes");
+		
+		d3.select(".mj_2")
+			.append("div")
+			.style("width", ((data.mj.No/(data.mj.Yes+data.mj.No))*100)+"%")
+			.style("background", "black")
+			.text("No: " + ((data.mj.No/(data.mj.Yes+data.mj.No))*100) + "% votes");
+			
+		d3.select(".id_1")
+			.append("div")
+			.style("width", ((data.id.Yes/(data.id.Yes+data.id.No))*100)+"%")
+			.style("background", "black")
+			.text("Yes: " + ((data.id.Yes/(data.id.Yes+data.id.No))*100) + "% votes");
+		
+		d3.select(".id_2")
+			.append("div")
+			.style("width", ((data.id.No/(data.id.Yes+data.id.No))*100)+"%")
+			.style("background", "black")
+			.text("No: " + ((data.id.No/(data.id.Yes+data.id.No))*100) + "% votes");
+		
+
+		
+		// console.log("hello");
+		
+		//set the scales to match our data
+		// var x = d3.scale.linear()
+		// .domain([0, function(d){
+		// 	return d3.max(d.Total)
+		// }])
+		// .range([0, function(d){
+		// 	return d3.max(d.Total)
+		// }]);
+		// //start drawing graph
+		// var chart = d3.select(".sen_data")
+		// chart.selectAll("div")
+		// 	//bind data
+		// 	.data(data)
+		// 	.enter().append("div")
+		// 	.style("width", function(d) { 
+		// 		var total = d.Merkley + d.Wehby;
+		// 		//responsive bars to match width of box
+		// 		return ((d.Merkley/total)*100) + "%";
+		// 	})
+		// 	.text(function(d) {
+		// 		//write out text in box
+		// 		return d.Merkely + ": " + total + "/" + total;
+		// 	})
+		// 	//style the text
+		// 	//.style("height", "23px")
+		// 	//on hover return the percent of clicks		 	
+		// 	.on("mouseover", function(d){
+		// 		d3.select(this)
+		// 			.text(function(d){
+		// 				//be sure to round it so there aren't crazy fractions
+		// 				var percent = d.Complete/d.Total;
+		// 				round = Math.round(percent*100);
+		// 				return d.abtest + ": " + round + "%";
+		// 			})
+		// 	})
+		// 	.on("mouseout", function(d){
+		// 		//on not hover return to original text
+		// 		d3.select(this)
+		// 			.text(function(d){
+		// 				return d.abtest + ": " + d.Complete + "/" + d.Total;
+		// 			})
+		// 	})
+	});// end JSON function
+	</script>
+</body>
